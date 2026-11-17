@@ -1,9 +1,8 @@
 # Sample results
 
-Three sessions with the Java port. All use the shipped `config/config.yaml` and `--seed 1`, so the readings can be
-reproduced with the same Java build (the readings differ from those in the Python version's
-[sample_results](https://github.com/Almog-Franco/ammeter-test-framework/tree/main/sample_results), because the random generator is different). The numbers, run ids and
-charts are in the files in this folder: see `index.jsonl`, `runs/*/report.md` and `comparisons/*/comparison.md`.
+Three sessions, all with the shipped `config/config.yaml` and `--seed 1`, so the readings can be reproduced. The
+numbers, run ids and charts are in the files in this folder: see `index.jsonl`, `runs/*/report.md` and
+`comparisons/*/comparison.md`.
 
 Run these commands in the repository root, after `./mvnw package -DskipTests`:
 

@@ -2,7 +2,7 @@ package ammeter.emulators;
 
 import java.util.Random;
 
-/** The random input source the emulators share, like Python's module-level {@code random}. */
+/** The random input source all emulators share, so one seed makes their readings repeatable. */
 public final class Utils {
     private static volatile Random random = new Random();
 

@@ -54,7 +54,7 @@ public record SamplingPlan(@JsonProperty("measurements_count") int count,
         return new SamplingPlan((int) Math.min(n, Integer.MAX_VALUE), f);
     }
 
-    /** Python's {@code math.isclose(a, b, rel_tol=relTol)}. */
+    /** True if a and b differ by at most {@code relTol} of the larger one. */
     static boolean isClose(double a, double b, double relTol) {
         return a == b || Math.abs(a - b) <= relTol * Math.max(Math.abs(a), Math.abs(b));
     }

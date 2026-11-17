@@ -1,15 +1,11 @@
 # Ammeter Test Framework (Java)
 
-Java port of the [Python ammeter test framework](https://github.com/Almog-Franco/ammeter-test-framework). Emulators for three ammeters (Greenlee, ENTES, CIRCUTOR) and a
-framework that samples them, analyses the readings, decides PASS or FAIL, and keeps every run in a results archive. It
-can also inject errors into the emulators to show that the error handling works.
-
-The commands, options, config file, checks, reports and results layout are the same as in the Python version. The
-[differences](#differences-from-the-python-version) are listed at the end.
+Emulators for three ammeters (Greenlee, ENTES, CIRCUTOR) and a framework that samples them, analyses the readings,
+decides PASS or FAIL, and keeps every run in a results archive. It can also inject errors into the emulators to show
+that the error handling works. Written in Java 17, tested with TestNG.
 
 - [docs/DESIGN.md](docs/DESIGN.md): design decisions, checks and their limits, results layout
 - [sample_results/](sample_results/README.md): the three sample scenarios and the commands that produce them
-- [FIXES.md](https://github.com/Almog-Franco/ammeter-test-framework/blob/main/docs/FIXES.md) in the Python repo: every change to the original Python code, and why (not repeated here)
 
 ## Setup
 
@@ -116,8 +112,7 @@ variable first (`set UPDATE_GOLDEN=1` in cmd).
 
 ## What a run produces
 
-The output has the same format as in the Python version. This example shows the format; the numbers are
-illustrative.
+This example shows the format; the numbers are illustrative.
 
 ```
 ## circutor: PASS
@@ -165,7 +160,7 @@ Each run is stored in `results/runs/<run_id>/`:
 
 ## Configuration
 
-Everything is in [config/config.yaml](config/config.yaml), which is the same file as in the Python version:
+Everything is in [config/config.yaml](config/config.yaml):
 
 | Section | What it sets |
 |---|---|
@@ -235,18 +230,3 @@ src/test/resources/golden/      saved copies of the reports
 docs/DESIGN.md
 sample_results/                 the sample scenarios (README.md; output of real runs)
 ```
-
-## Differences from the Python version
-
-- **Error class names.** `AmmeterConnectionException`, `AmmeterTimeoutException` and `AmmeterResponseException`
-  instead of `*Error`. Error counts in reports read, for example, `AmmeterTimeoutException x1`.
-- **Random numbers** come from `java.util.Random`. A seeded run repeats in Java, but gives other values than the Python
-  version with the same seed. The golden report files were regenerated.
-- **Emulator process.** The emulators run in a child JVM (`ammeter.emulators.Emulators`) instead of
-  `python -m src.emulators`. The options go through stdin, and the child exits when the parent exits.
-- **`run.json`** has `java` and `platform` in the `environment` field instead of `python` and `platform`.
-- **Charts** are drawn with XChart instead of matplotlib. The files and their content are the same. There is no
-  optional dependency, so charts are always available.
-- **Ctrl-C** during `run` is handled by a signal handler that interrupts the run. The partial run is kept, with status
-  INTERRUPTED. A second Ctrl-C exits at once with code 130.
-- **`CalibrateChecks`** uses `SplittableRandom` instead of numpy.

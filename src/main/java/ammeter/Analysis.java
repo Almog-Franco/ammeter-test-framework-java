@@ -275,7 +275,7 @@ public final class Analysis {
         return compare(runs, 30);
     }
 
-    /** Arithmetic mean with a compensated sum, like Python's {@code statistics.fmean}. */
+    /** Arithmetic mean with a compensated sum. */
     public static double mean(double[] values) {
         return sum(values) / values.length;
     }
@@ -300,7 +300,7 @@ public final class Analysis {
         return mean != 0 ? stdev(values) / mean : Double.POSITIVE_INFINITY;
     }
 
-    /** Neumaier's compensated sum: as exact as Python's {@code math.fsum} for the data seen here. */
+    /** Neumaier's compensated sum, so rounding errors don't add up. */
     public static double sum(double[] values) {
         double sum = 0.0;
         double compensation = 0.0;
@@ -317,7 +317,7 @@ public final class Analysis {
         return n % 2 == 1 ? sorted[n / 2] : (sorted[n / 2 - 1] + sorted[n / 2]) / 2;
     }
 
-    /** Python's {@code statistics.quantiles(values, n=4, method="inclusive")}. */
+    /** Quartile i (1 to 3) by the inclusive method: linear interpolation, with the min and max as the ends. */
     private static double quartile(double[] sorted, int i) {
         int m = sorted.length - 1;
         int j = i * m / 4;

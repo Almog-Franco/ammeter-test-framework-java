@@ -40,14 +40,14 @@ public final class Emulators {
      */
     public static List<Thread> serve(JsonNode ammeters, JsonNode faults, Long seed) {
         Map<String, AmmeterEmulator> emulators = new LinkedHashMap<>();
-        ammeters.fields().forEachRemaining(entry -> {
+        ammeters.properties().forEach(entry -> {
             String name = entry.getKey();
             AmmeterEmulator emulator = create(entry.getValue().path("emulator").asText(null), entry.getValue().path("port").asInt());
             if (faults != null && !faults.isNull() && !faults.isEmpty()) {
                 JsonNode faultSeed = faults.path("seed");
                 Object seedText = faultSeed.isMissingNode() || faultSeed.isNull() ? null : faultSeed.asText() + ":" + name;
                 Map<String, Double> rates = new LinkedHashMap<>();
-                faults.path("rates").fields().forEachRemaining(rate -> rates.put(rate.getKey(), rate.getValue().asDouble()));
+                faults.path("rates").properties().forEach(rate -> rates.put(rate.getKey(), rate.getValue().asDouble()));
                 emulator = new FaultyAmmeter(emulator, rates, seedText, faults.path("delay_s").asDouble(3.0));
             }
             emulators.put(name, emulator);

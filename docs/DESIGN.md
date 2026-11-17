@@ -1,9 +1,5 @@
 # Design decisions
 
-This is the design of the Java port. The reasoning is the same as in the Python version; names, libraries and
-platform notes are the Java ones. Where the Python design has no direct Java counterpart, the text says what the Java
-port does instead.
-
 ## Overview
 
 ```
@@ -55,14 +51,12 @@ quotes in command-line arguments. The child stops when its parent stops, even wh
 the parent process and exits when it ends. The parent also stops the child in a shutdown hook and in
 `AmmeterTestFramework.close()`.
 
-A client that resets or drops its connection no longer stops an emulator (see fix 14 in
-[FIXES.md](https://github.com/Almog-Franco/ammeter-test-framework/blob/main/docs/FIXES.md) in the Python repo). In `AmmeterEmulator.startServer()` only an `IOException` while handling
-one connection is survived. Any other error stops the emulator thread, so a real bug is not hidden.
+A client that resets or drops its connection doesn't stop an emulator. In `AmmeterEmulator.startServer()` only an
+`IOException` while handling one connection is survived. Any other error stops the emulator thread, so a real bug is not hidden.
 
 ## Configuration
 
-`config.yaml` is the only place that has ports, commands, sampling and limits. It is the same file as in the Python
-version. It is parsed with SnakeYAML's `SafeConstructor` and checked before anything starts. Every problem is listed
+`config.yaml` is the only place that has ports, commands, sampling and limits. It is parsed with SnakeYAML's `SafeConstructor` and checked before anything starts. Every problem is listed
 with its key name, instead of failing on the first problem or on a `null` somewhere in the middle of a run. The
 problems are reported together as one `ConfigException`. The checks cover:
 
@@ -138,8 +132,8 @@ project folder.
 
 - **Plain Java, no statistics library.** `Analysis` computes the mean, median, sample standard deviation (n−1), min
   and max. Also CV, geometric mean, 95% confidence intervals of the mean and of the CV, quartiles and outliers. Sums use
-  Neumaier's compensated summation, which is as exact as Python's `math.fsum` for this data. Quartiles use the same
-  "inclusive" method as Python's `statistics.quantiles`.
+  Neumaier's compensated summation, so rounding errors don't add up. Quartiles use the "inclusive" method: linear
+  interpolation between the sorted readings, with the min and max as the ends.
 - **Bootstrap confidence intervals:** 1000 resamples with `new Random(0)`, so a report is repeatable. Greenlee's
   readings have a long tail, and `mean ± 1.96·SE` gave an interval reaching below zero. A current can't be negative.
 - **Outliers are counted, not removed** (1.5 IQR rule). For Greenlee they are real readings from the tail, and dropping
@@ -200,15 +194,13 @@ or have a calibration error, even when they stay within the range.
 
 ### How the limits were chosen
 
-`CalibrateChecks` simulated 200,000 clean runs per case (the default of `--runs`). The false-alarm and detection
-figures below come from the original calibration of the Python version. They depend on the physics and the limits, not
-on the language, and the Java tool measures the same things. Most of the table is "share of runs that falsely failed";
+`CalibrateChecks` simulated 200,000 clean runs per case (the default of `--runs`). Most of the table is "share of runs that falsely failed";
 the last two rows are detection rates:
 
 | | Model check (\|z\| > 5) | Drift check (\|t\| ≥ 5) |
 |---|---|---|
-| False alarms, 10 readings | ≤ 4 in 100,000 | up to 1 in 1,000, so the check needs 30 readings |
-| False alarms, 30 readings | ≤ 1 in 100,000 | ≤ 5 in 100,000 |
+| False alarms, 10 readings | ≤ 2 in 100,000 | up to 1.3 in 1,000, so the check needs 30 readings |
+| False alarms, 30 readings | ≤ 1 in 100,000 | ≤ 4 in 100,000 |
 | False alarms, 50+ readings | ≤ 1 in 100,000 | ≤ 1 in 100,000 |
 | Caught: ×0.5 calibration error, 50 readings | ENTES 98%, CIRCUTOR 100%, Greenlee 24% | - |
 | Caught: exact straight line | - | always |
@@ -245,12 +237,11 @@ others' runs):
    qualify.
 
 The physics predicts CIRCUTOR (CV 0.50) ahead of ENTES (0.61), with Greenlee (≈5) far behind. How many readings it
-takes to show that, from 20 simulated comparisons each (measured with the Python version; the Java comparison uses the
-same rule):
+takes to show that, from 20 simulated comparisons each:
 
 | Readings per ammeter | 50 | 200 | 400 | 800 |
 |---|---|---|---|---|
-| CIRCUTOR named the winner | 2 of 20 | 11 of 20 | 19 of 20 | 20 of 20 |
+| CIRCUTOR named the winner | 1 of 20 | 12 of 20 | 18 of 20 | 20 of 20 |
 | Wrong winner | 0 | 0 | 0 | 0 |
 
 With the default 50 readings the honest result is usually "CIRCUTOR and ENTES are tied, Greenlee is clearly less
@@ -297,15 +288,13 @@ results/
 - **Why the framework does the seeding:** all emulators draw their random inputs from one shared generator,
   `Utils.generateRandomFloat`. The framework seeds it in the emulator process (`Utils.seed`, called from
   `Emulators.serve`) after creating the emulators and before the first reading, without changing the emulator code.
-  In Python the emulators reseed the shared generator with the clock whenever one is created, which is why the seeding
-  has to happen after creation. The Java generator is not reseeded on creation, but the framework keeps the same order.
 - **Limits:**
   - **Same command, same readings.** All emulators in the process draw from the one generator, in the order the runs
     happen. Running `entes` alone gives different readings than `entes` as part of all three.
   - **Only emulators the framework starts can be seeded.** An already-running one is reused unseeded, with a warning.
   - **The timing isn't repeated, just the readings.** With a slow device, the number of missed slots can differ
     between runs.
-  - **The values are those of `java.util.Random`.** The same seed gives other readings than the Python version.
+  - **The values are those of `java.util.Random`.** The same seed gives the same readings on every JVM.
 
 `EmulatorsTest.seedsMakeReadingsAndFaultsRepeatable` checks that the same seed gives the same readings and faults,
 and other seeds give others.
@@ -397,7 +386,7 @@ gives the same result every run.
 - TestNG for the tests (test scope).
 - Maven, through the wrapper, builds the project. The shade plugin builds the runnable jar `target/ammeter.jar` with
   main class `ammeter.Cli`.
-- No numeric library. `CalibrateChecks` uses `SplittableRandom` where the Python tool used numpy.
+- No numeric library. `CalibrateChecks` uses `SplittableRandom`.
 
 ## Limitations
 

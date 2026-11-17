@@ -137,7 +137,7 @@ public class FaultyAmmeterTest {
         return (boolean) method.invoke(null, values);
     }
 
-    // the Python test assigns emulator.rates = {}; Java keeps the rates private, so empty the map in place
+    // the rates are private, so the test empties the map in place
     @SuppressWarnings("unchecked")
     private static Map<String, Double> ratesOf(FaultyAmmeter emulator) throws Exception {
         Field field = FaultyAmmeter.class.getDeclaredField("rates");

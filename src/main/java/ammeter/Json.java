@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 
-/** JSON with snake_case keys (run_id, std_dev, ...) and paths as plain text, like the Python version wrote. */
+/** JSON with snake_case keys (run_id, std_dev, ...) and paths as plain text, for the result archive. */
 public final class Json {
     public static final ObjectMapper MAPPER = JsonMapper.builder()
             .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)

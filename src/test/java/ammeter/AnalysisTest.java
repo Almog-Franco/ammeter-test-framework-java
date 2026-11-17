@@ -66,7 +66,7 @@ public class AnalysisTest {
         return Analysis.stdev(values);
     }
 
-    /** Like pytest.approx with the default relative tolerance of 1e-6. */
+    /** Equal within a relative tolerance of 1e-6. */
     private static void approx(Double actual, double expected) {
         assertNotNull(actual);
         assertEquals(actual, expected, Math.max(Math.abs(expected) * 1e-6, 1e-12));

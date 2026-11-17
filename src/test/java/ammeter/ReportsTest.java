@@ -22,12 +22,12 @@ import org.testng.annotations.Test;
 public class ReportsTest {
     private static final Path GOLDEN = Settings.PROJECT_ROOT.resolve("src/test/resources/golden");
 
-    /** Python's random.Random, so the golden files get the same readings as the Python ones. */
-    private static final class PyRandom {
+    /** A Mersenne Twister (MT19937) generator, so the readings in the golden files never change. */
+    private static final class MersenneTwister {
         private final int[] mt = new int[624];
         private int pos = 624;
 
-        PyRandom(int seed) {
+        MersenneTwister(int seed) {
             init(19650218);
             int i = 1;
             int j = 0;
@@ -84,8 +84,8 @@ public class ReportsTest {
         }
     }
 
-    private static List<Double> pyEntesReadings(int n, int seed) {
-        PyRandom rng = new PyRandom(seed);
+    private static List<Double> goldenEntesReadings(int n, int seed) {
+        MersenneTwister rng = new MersenneTwister(seed);
         List<Double> values = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             double b = rng.uniform(0.01, 0.1);
@@ -218,11 +218,11 @@ public class ReportsTest {
 
     @Test
     public void reportsMatchTheSavedCopies() throws IOException {
-        List<Double> highValues = new ArrayList<>(pyEntesReadings(50, 1));
+        List<Double> highValues = new ArrayList<>(goldenEntesReadings(50, 1));
         highValues.add(190.0);
         // exact in floating point, so the timing figures are exact too
         Run high = run(highValues, null, 0, entesAs("high", 50.0), 0.125);
-        Run low = run(pyEntesReadings(50, 2), null, 0, entesAs("low", 70.0), 0.125);
+        Run low = run(goldenEntesReadings(50, 2), null, 0, entesAs("low", 70.0), 0.125);
         List<ResultStore.IndexEntry> entries = new ArrayList<>();
         for (Run r : List.of(high, low)) { // what the archive index stores
             Statistics s = r.statistics();

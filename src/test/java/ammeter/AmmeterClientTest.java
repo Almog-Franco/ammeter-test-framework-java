@@ -86,7 +86,7 @@ public class AmmeterClientTest {
             {bytes("nan"), "not a finite number"},
             {bytes("inf"), "not a finite number"},
             {new byte[] {(byte) 0xff, (byte) 0xfe}, "not a number"},
-            {bytes("1_000"), "not a number"}, // Python's float() would accept this
+            {bytes("1_000"), "not a number"},
             {bytes("0x10"), "not a number"},
             {bytes("12.5 A"), "not a number"},
             {bytes("-Infinity"), "not a finite number"},
@@ -114,8 +114,7 @@ public class AmmeterClientTest {
 
     /**
      * A normal reply is read, also when it arrives in pieces, by both the new client and the original one, and the
-     * original one now has a timeout. Python also checked that no ResourceWarning about sockets appears; the JVM has
-     * no such warning, so the repeated reads only check that every connection is read and closed normally.
+     * original one has a timeout. The repeated reads check that every connection is read and closed normally.
      */
     @Test
     public void readsAValueAndClosesTheSocket() throws Exception {
@@ -152,7 +151,7 @@ public class AmmeterClientTest {
         }
     }
 
-    /** The configured host is really used, also through fromSpec(). Split from the Python test to allow a skip. */
+    /** The configured host is really used, also through fromSpec(). Skipped without IPv6. */
     @Test(dataProvider = "slowRefusal")
     @SuppressWarnings("try") // the resource only swaps the connector while it is open
     public void unreachableAmmeterUsesTheConfiguredHost(boolean slowRefusal) throws Exception {

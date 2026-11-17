@@ -8,19 +8,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Number and value formatting that matches Python's {@code format()} and {@code repr()}, so reports and error
- * messages read the same as the original Python framework (e.g. {@code 0.0001234}, {@code 1e+16}, {@code 'abc'}).
+ * Number and value formatting for reports and error messages: significant-digit, fixed and percent formats, and
+ * values written the way they appear in messages (e.g. {@code 0.0001234}, {@code 1e+16}, {@code 'abc'}).
  */
 public final class Fmt {
     private Fmt() {
     }
 
-    /** Like Python's {@code format(x, "g")}: 6 significant digits, trailing zeros dropped. */
+    /** 6 significant digits, trailing zeros dropped; scientific notation for very large or small numbers. */
     public static String g(double x) {
         return g(x, 6);
     }
 
-    /** Like Python's {@code format(x, ".{precision}g")}. */
+    /** {@code precision} significant digits, trailing zeros dropped (half-even rounding). */
     public static String g(double x, int precision) {
         if (!Double.isFinite(x)) {
             return special(x, false);
@@ -38,13 +38,13 @@ public final class Fmt {
         return sign + scientific(d, exp);
     }
 
-    /** Like Python's {@code format(x, "+.{precision}g")} when {@code signed}. */
+    /** Like {@link #g(double, int)}, with a leading + on positive numbers when {@code signed}. */
     public static String g(double x, int precision, boolean signed) {
         String text = g(x, precision);
         return signed && !text.startsWith("-") ? "+" + text : text;
     }
 
-    /** Like Python's {@code format(x, ".{decimals}f")}, with a leading + when {@code signed}. */
+    /** Fixed notation with {@code decimals} decimals, with a leading + when {@code signed}. */
     public static String f(double x, int decimals, boolean signed) {
         if (!Double.isFinite(x)) {
             return special(x, signed);
@@ -60,7 +60,7 @@ public final class Fmt {
         return f(x, decimals, false);
     }
 
-    /** Like Python's {@code format(x, ".{decimals}%")}. */
+    /** {@code x} as a percentage with {@code decimals} decimals, e.g. 0.123 as {@code 12.3%}. */
     public static String percent(double x, int decimals, boolean signed) {
         if (!Double.isFinite(x)) {
             return special(x, signed) + "%";
@@ -72,12 +72,12 @@ public final class Fmt {
         return percent(x, decimals, false);
     }
 
-    /** Python's {@code str()}: text as it is, anything else like {@link #repr}. */
+    /** Text as it is, anything else like {@link #repr}. */
     public static String str(Object value) {
         return value instanceof String ? (String) value : repr(value);
     }
 
-    /** Python's {@code repr()} of a value read from YAML or JSON: None, True, 1.5, 'text', [..], {..}. */
+    /** A value read from YAML or JSON as written in messages: None, True, 1.5, 'text', [..], {..}. */
     public static String repr(Object value) {
         if (value == null) {
             return "None";
@@ -102,7 +102,7 @@ public final class Fmt {
         return String.valueOf(value);
     }
 
-    /** Python's {@code repr()} of a float: the shortest text that reads back as the same number. */
+    /** The shortest text that reads back as the same number, e.g. 1.0, 0.0001, 1e-05, 1e+16. */
     public static String repr(double x) {
         if (!Double.isFinite(x)) {
             return special(x, false);
@@ -120,7 +120,7 @@ public final class Fmt {
         return sign + scientific(d, exp);
     }
 
-    /** Python's {@code repr()} of a string: in single quotes (double if it contains only single ones). */
+    /** Text in single quotes (double if it contains only single ones), with control characters escaped. */
     public static String repr(String s) {
         char quote = s.indexOf('\'') >= 0 && s.indexOf('"') < 0 ? '"' : '\'';
         StringBuilder out = new StringBuilder().append(quote);
@@ -144,7 +144,7 @@ public final class Fmt {
         return out.append(quote).toString();
     }
 
-    /** Python's {@code type(value).__name__} for values read from YAML. */
+    /** A short type name for values read from YAML: NoneType, bool, int, float, str, list or dict. */
     public static String typeName(Object value) {
         if (value == null) {
             return "NoneType";

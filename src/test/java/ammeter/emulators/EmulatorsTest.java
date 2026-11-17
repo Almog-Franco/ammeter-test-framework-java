@@ -273,8 +273,6 @@ public class EmulatorsTest {
         Path tmp = TestSupport.tempDir();
         AmmeterSpec broken = new AmmeterSpec("broken", TestSupport.freePort(), "MEASURE", "127.0.0.1", "no_such_emulator",
                 null, null, null, null, null);
-        // Python also checks that no ResourceWarning names emulators.log (an unclosed file); Java has no such
-        // warning, and the child's log is redirected by the OS, so this check is dropped.
         EmulatorException e = expectThrows(EmulatorException.class,
                 () -> new EmulatorProcess(List.of(broken), tmp.resolve("emulators.log")).start());
         assertTrue(Pattern.compile("(?s)did not start: broken.*unknown emulator").matcher(e.getMessage()).find(), e.getMessage());

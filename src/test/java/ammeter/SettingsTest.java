@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 
 public class SettingsTest {
 
-    /** A fresh temp folder, with symlinks resolved like pytest's tmp_path. */
+    /** A fresh temp folder, with symlinks resolved. */
     private static Path tmp() {
         try {
             return TestSupport.tempDir().toRealPath();
@@ -51,7 +51,7 @@ public class SettingsTest {
         return new Settings.Overrides();
     }
 
-    /** Sets a dotted path in the config, like the Python test's _set(path, value). */
+    /** Sets a dotted path in the config, e.g. "testing.acceptance.stuck_after". */
     @SuppressWarnings("unchecked")
     private static void set(Map<String, Object> config, String path, Object value) {
         String[] keys = path.split("\\.");
