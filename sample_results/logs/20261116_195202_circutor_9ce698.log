@@ -1,0 +1,7 @@
+2026-11-16 19:52:02,805 INFO    circutor at 127.0.0.1:5003: 50 readings at 10 Hz
+2026-11-16 19:52:07,711 WARNING reading 2 failed: AmmeterResponseException: not a number: 'ERR#42'
+2026-11-16 19:52:07,711 WARNING reading 3 failed: AmmeterResponseException: not a number: 'ERR#42'
+2026-11-16 19:52:07,711 WARNING reading 10 failed: AmmeterResponseException: not a number: 'ERR#42'
+2026-11-16 19:52:07,711 WARNING reading 13 failed: AmmeterResponseException: not a number: 'ERR#42'
+2026-11-16 19:52:07,711 WARNING reading 15 failed: AmmeterTimeoutException: no complete answer from 127.0.0.1:5003 within 2 s
+2026-11-16 19:52:07,770 INFO    finished with status FAIL

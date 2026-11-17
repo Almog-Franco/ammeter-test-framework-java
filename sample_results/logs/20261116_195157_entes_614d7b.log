@@ -1,0 +1,7 @@
+2026-11-16 19:51:57,323 INFO    entes at 127.0.0.1:5002: 50 readings at 10 Hz
+2026-11-16 19:52:02,730 WARNING reading 10 failed: AmmeterResponseException: empty response (unknown command, or the ammeter closed the connection)
+2026-11-16 19:52:02,731 WARNING reading 16 failed: AmmeterResponseException: empty response (unknown command, or the ammeter closed the connection)
+2026-11-16 19:52:02,731 WARNING reading 23 failed: AmmeterResponseException: not a number: 'ERR#42'
+2026-11-16 19:52:02,731 WARNING reading 27 failed: AmmeterResponseException: not a number: 'ERR#42'
+2026-11-16 19:52:02,731 WARNING reading 34 failed: AmmeterTimeoutException: no complete answer from 127.0.0.1:5002 within 2 s
+2026-11-16 19:52:02,805 INFO    finished with status FAIL

@@ -1,0 +1,57 @@
+{
+  "rows": [
+    {
+      "ammeter": "circutor",
+      "run_id": "20261116T175114Z_circutor_5bed0b",
+      "status": "PASS",
+      "count": 50,
+      "mean": 0.028451415856542192,
+      "median": 0.02583299838050076,
+      "cv": 0.5061946360932973,
+      "cv_ci95": [
+        0.4232413924842869,
+        0.5781047920912031
+      ],
+      "bias": -0.04987521005176054,
+      "error_rate": 0.0
+    },
+    {
+      "ammeter": "entes",
+      "run_id": "20261116T175109Z_entes_8d91c1",
+      "status": "PASS",
+      "count": 50,
+      "mean": 71.05961608485512,
+      "median": 64.94189008315294,
+      "cv": 0.5864010738340057,
+      "cv_ci95": [
+        0.4737154756760956,
+        0.6938643897682452
+      ],
+      "bias": 0.06053620291270434,
+      "error_rate": 0.0
+    },
+    {
+      "ammeter": "greenlee",
+      "run_id": "20261116T175104Z_greenlee_e87b01",
+      "status": "PASS",
+      "count": 50,
+      "mean": 0.4649712071009269,
+      "median": 0.09815879202644454,
+      "cv": 4.157155933640062,
+      "cv_ci95": [
+        0.9051068368077235,
+        4.720127813037362
+      ],
+      "bias": -0.08830890323406593,
+      "error_rate": 0.0
+    }
+  ],
+  "not_ranked": [],
+  "min_readings": 30,
+  "most_reliable": null,
+  "tied": [
+    "circutor",
+    "entes"
+  ],
+  "conclusion": "insufficient evidence: circutor, entes are equally precise within the uncertainty of their readings; more readings are needed to separate them"
+}
